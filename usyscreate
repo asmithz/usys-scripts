@@ -1,0 +1,65 @@
+#!/bin/bash
+
+echo    "************************************"
+echo -e "*        Creating a new user       *"
+echo    "************************************"
+
+read -p "Username: " username
+read -p "GECOS(comment): " gecos
+read -p "Give specific UID? [y/n]: " give_uid
+read -p "Give user /home/${username} directory? [y/n]: " give_homedir
+
+if [[ $give_homedir == y ]]; then
+	home_dir="/home/${username}"
+	if [[ $give_uid == y ]]; then
+		read -p "Type UID: " uid
+		useradd -c "${gecos}" -u "${uid}" -s /bin/bash -m -d "${home_dir}" "${username}" -k /etc/skel/   
+	else
+		useradd -c "${gecos}" -s /bin/bash -m -d "${home_dir}" "${username}" -k /etc/skel/ 
+	fi 
+else
+	if [[ $give_uid == y ]]; then
+		read -p "Type UID: " uid
+		useradd -c "${gecos}" -u "${uid}" -s /bin/bash "${username}"   
+	else
+		useradd -c "${gecos}" -s /bin/bash "${username}"  
+	fi 
+fi
+
+if [[ $? -eq 0 ]];then
+	echo "-> User $username with uid $(id -u $username) created."
+	passwd "${username}" 
+else
+	echo "[X] Error check inputs."
+	exit 1
+fi
+
+read -p "Add groups [y/n]: " opt_groups
+
+if [[ $opt_groups == y  ]]; then
+	while read -p "Type existing group for user (0 for exit)" group ;do
+		if [[ $group != 0 ]]; then
+			gpasswd -a "${username}" "$group"
+			if [[ $? -eq 0 ]]; then
+				echo "-> User $username added to $group."
+			else
+				echo "[X] Error, group does not exist."
+			fi
+
+		else 
+			break
+		fi	
+	done
+fi
+
+echo "-> Operation succeded."
+read -p "Create a new user? [y/n]: " new_user
+
+if [[ $new_user == y ]]; then
+    usyscreate
+fi
+echo "-> Finalizing ..."
+
+
+
+

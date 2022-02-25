@@ -1,0 +1,34 @@
+#!/bin/bash
+
+echo    "************************************"
+echo -e "*      Check user information      *"
+echo    "************************************"
+
+read -p "Type user account name to display information: " username
+
+#Check if user exists
+if id ${username} > /dev/null;then
+    echo "------------------------------"
+    echo "User *${username}* information"
+    echo "------------------------------"
+    echo "- UID => $(id -nu ${username}) - $(id -u ${username})"
+    echo "- GID (primary group)=> $(id -ng ${username}) - $(id -g ${username})"
+    user_groups=$(id -G ${username})
+    echo "Groups:"
+    for group in $(id -nG ${username});do
+        #Show group with its id
+        echo "- $group => $(getent group $group | cut -d: -f3)"
+    done
+    
+else
+    echo "The user does not exist."
+    exit 0
+    
+fi
+
+read -p "Check another user account information? [y/n]: " new_check
+
+if [[ $new_check == y ]]; then
+    usysmodify
+fi
+echo "-> Finalizing ..."

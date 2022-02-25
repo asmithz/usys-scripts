@@ -1,0 +1,39 @@
+#!/bin/bash
+
+echo  "************************************"
+echo  "*   System Administration script   *"
+
+manage_users(){
+    while true; do
+        echo "************************************"
+        echo "--> Available Operations:"
+        echo "- [1] Create a new user"
+        echo "- [2] Check an existing user"
+        echo "- [3] Modify an existing user"
+        echo "- [4] Delete an existing user"
+        echo "- [0] Exit"
+            read -p "> Input the respective number: " user_option
+            case $user_option in 
+                1) usyscreate ;;
+                2) usysmodify ;;
+                4) usysread   ;;
+                0) exit 0 ;;
+                *) echo "INVALID INPUT";;
+            esac
+    done
+}
+
+while true;do
+    echo "************************************"
+    echo "What do you want to manage today?"
+    echo "- [1] Users"
+    echo "- [2] Groups"
+    echo "- [0] Exit"
+    read -p "> Input the respective number: " manage_option
+    case $manage_option in
+        1) manage_users ;;
+        #2) manage_groups ;;
+        0) exit 0 ;;
+        *) echo "INVALID INPUT";;
+    esac
+done

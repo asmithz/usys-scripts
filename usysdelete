@@ -1,0 +1,33 @@
+#!/bin/bash
+
+echo    "************************************"
+echo -e "*    Deleting an existing user     *"
+echo    "************************************"
+
+read -p "Type user account name to delete: " username
+
+if [[ -d "/home/${username}" ]];then
+	read -p "Found /home/${username} directory. Delete this also (-r)? [y/n]: " homedir
+	read -p "Force (-f)? [y/n]: " forcedel
+
+	if [[ $forcedel == y ]]; then
+		userdel -r -f ${username}
+	else
+		userdel -r ${username}
+	fi
+else
+	echo "No /home/${username} directory found."
+	read -p "Force (-f)? [y/n]: " forcedel
+
+	if [[ $forcedel == y ]]; then
+		userdel -f ${username}
+	else
+		userdel ${username}
+	fi
+fi
+
+if [[ $? -eq 0 ]]; then
+  echo "-> Operation succeded, user ${username} deleted."
+else
+  echo "[X] Error, something happend."
+fi
